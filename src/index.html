@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Relatório Fotográfico</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+</head>
+<body class="dark-mode">
+    <header>
+        <h1>Gerador de Relatório Fotográfico</h1>
+        <nav>
+            <a href="#"><i class="fas fa-home"></i> Home</a>
+            <a href="#"><i class="fas fa-info-circle"></i> About</a>
+            <a href="#"><i class="fas fa-cogs"></i> Services</a>
+            <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+        </nav>
+        <button class="mode-toggle" onclick="toggleMode()" aria-label="Alternar modo claro/escuro">Light Mode</button>
+    </header>
+
+    <main>
+        <form id="reportForm">
+            <label for="city">Cidade:</label>
+            <input type="text" id="city" name="city" required>
+
+            <label for="agreement">Convênio:</label>
+            <input type="text" id="agreement" name="agreement" required>
+
+            <label for="year">Ano:</label>
+            <input type="text" id="year" name="year" required>
+
+            <label for="object">Objeto:</label>
+            <input type="text" id="object" name="object" required>
+
+            <label for="footer">Rodapé:</label>
+            <input type="text" id="footer" name="footer" required>
+
+            <label for="title">Título do Relatório:</label>
+            <input type="text" id="title" name="title" required>
+
+            <!-- Campo para upload de imagens -->
+            <label for="images">Adicionar Imagens:</label>
+            <input type="file" id="images" name="images" multiple accept="image/*">
+            
+            <!-- Área para visualizar as imagens carregadas -->
+            <div id="imagePreview"></div>
+
+            <button type="submit">Gerar Relatório</button>
+        </form>
+    </main>
+
+</body>
+</html>
