@@ -7,19 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="./style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-
 </head>
 <body class="dark-mode">
     <header>
-        <h1>Gerador de Relatório Fotográfico</h1>
+        <div id="logo-container">
+            <img src="/image/logo.png1" alt="FotoLab Logo" id="logo">
+            <h1 id="site-name">FotoLab</h1>
+        </div>
         <nav>
             <a href="#"><i class="fas fa-home"></i> Home</a>
             <a href="#"><i class="fas fa-info-circle"></i> About</a>
             <a href="#"><i class="fas fa-cogs"></i> Services</a>
             <a href="#"><i class="fas fa-envelope"></i> Contact</a>
         </nav>
-        <button class="mode-toggle" onclick="toggleMode()" aria-label="Alternar modo claro/escuro">Light Mode</button>
+        <button class="mode-toggle" onclick="toggleMode()" aria-label="Alternar modo claro/escuro">Light</button>
     </header>
 
     <main>
@@ -42,16 +43,18 @@
             <label for="title">Título do Relatório:</label>
             <input type="text" id="title" name="title" required>
 
-            <!-- Campo para upload de imagens -->
             <label for="images">Adicionar Imagens:</label>
             <input type="file" id="images" name="images" multiple accept="image/*">
             
-            <!-- Área para visualizar as imagens carregadas -->
             <div id="imagePreview"></div>
 
-            <button type="submit">Gerar Relatório</button>
+            <button type="submit" id="generateReport">Gerar Relatório</button>
         </form>
     </main>
-
+    <footer>
+        <p>&copy; 2025 FotoLab. Todos os direitos reservados.</p>
+    </footer>
+    
+    <script src="./script.js"></script>
 </body>
 </html>

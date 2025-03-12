@@ -9,6 +9,7 @@ body {
     background-repeat: no-repeat;
 }
 
+
 .light-mode {
     background-color: rgba(255, 255, 255, 0.8);
     color: #1a1a1a;
@@ -179,6 +180,46 @@ form input:focus, form textarea:focus {
     transform: scale(1.1);
 }
 
+
+footer {
+    background-color: rgba(45, 45, 45, 0.9);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 8px;
+    margin-top: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+footer p {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Modo claro */
+.light-mode footer {
+    background-color: rgba(240, 244, 248, 0.8);
+    color: #1a1a1a;
+}
+
+#logo-container {
+    display: flex;
+    align-items: center;
+}
+
+#logo {
+    width: 50px;  /* Ajuste o tamanho do logo conforme necessário */
+    height: auto;
+    margin-right: 10px;  /* Espaço entre o logo e o nome */
+}
+
+#site-name {
+    font-size: 24px;  /* Ajuste o tamanho do nome conforme necessário */
+    font-weight: bold;
+}
+
+
+
 /* Responsividade */
 @media (max-width: 768px) {
     header {
@@ -193,5 +234,12 @@ form input:focus, form textarea:focus {
     #imagePreview img {
         width: 80px;
         height: 80px;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    footer {
+        margin-top: 1rem;
     }
 }
