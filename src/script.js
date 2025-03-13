@@ -23,39 +23,32 @@ document.getElementById('generateReport').addEventListener('click', function(eve
     const doc = new jsPDF();
 
     // Configurações do layout
-    const imgWidth = 150; // Largura máxima das imagens
-    const imgHeight = 100; // Altura máxima das imagens
-    const margin = 20; // Margem entre as imagens e bordas
-    const pageWidth = doc.internal.pageSize.width; // Largura da página
-    const pageHeight = doc.internal.pageSize.height; // Altura da página
-    let yOffset = 50; // Posição inicial do conteúdo (abaixo do cabeçalho)
-    let pageCount = 1; // Contador de páginas
-    let imagesPerPage = 0; // Contador de imagens por página
+    const imgMaxWidth = 150; 
+    const imgMaxHeight = 100; 
+    const margin = 20;
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    let yOffset = 50; 
+    let pageCount = 1; 
+    let imagesPerPage = 0; 
 
-    // Função para quebrar texto em várias linhas
-    const splitText = (text, maxWidth) => {
-        return doc.splitTextToSize(text, maxWidth);
-    };
+    // Função para quebrar texto
+    const splitText = (text, maxWidth) => doc.splitTextToSize(text, maxWidth);
 
-    // Função para adicionar o cabeçalho em todas as páginas
+    // Função para adicionar o cabeçalho
     const addHeader = () => {
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
 
-        // Texto do cabeçalho
         const headerText = `Cidade: ${city}    Ano: ${year}    Objeto: ${object}`;
         const headerLines = splitText(headerText, pageWidth - 2 * margin);
 
-        // Adiciona um retângulo sem arredondamento e com cor de fundo #2C2C2C
-        doc.setFillColor(44, 44, 44); // Cor de fundo #2C2C2C
-        doc.setDrawColor(44, 44, 44); // Cor da borda #2C2C2C
-        doc.setLineWidth(1);
-        doc.rect(0, 10, pageWidth, 30, 'F'); // Retângulo sem arredondamento
+        doc.setFillColor(44, 44, 44);
+        doc.rect(0, 10, pageWidth, 30, 'F'); 
 
-        // Adiciona cada linha do cabeçalho
-        doc.setTextColor(255, 255, 255); // Cor do texto branco
+        doc.setTextColor(255, 255, 255);
         headerLines.forEach((line, index) => {
-            doc.text(line, margin, 25 + index * 10); // Alinha o texto à esquerda com margem
+            doc.text(line, margin, 25 + index * 10);
         });
     };
 
@@ -64,87 +57,56 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         doc.setFontSize(10);
         doc.setFont("helvetica", "italic");
 
-        // Rodapé com texto e paginação
-        const footerText = `${footer}`;
         const pageText = `Página ${pageCount}`;
 
-        // Adiciona um retângulo sem arredondamento e com cor de fundo #2C2C2C
-        doc.setFillColor(44, 44, 44); // Cor de fundo #2C2C2C
-        doc.setDrawColor(44, 44, 44); // Cor da borda #2C2C2C
-        doc.setLineWidth(1);
-        doc.rect(0, pageHeight - 25, pageWidth, 15, 'F'); // Retângulo sem arredondamento
+        doc.setFillColor(44, 44, 44);
+        doc.rect(0, pageHeight - 25, pageWidth, 15, 'F');
 
-        // Adiciona o texto do rodapé
-        doc.setTextColor(255, 255, 255); // Cor do texto branco
-        doc.text(footerText, margin, pageHeight - 15); // Alinha o texto à esquerda com margem
-        doc.text(pageText, pageWidth - margin - doc.getTextWidth(pageText), pageHeight - 15); // Alinha o texto à direita com margem
+        doc.setTextColor(255, 255, 255);
+        doc.text(footer, margin, pageHeight - 15);
+        doc.text(pageText, pageWidth - margin - doc.getTextWidth(pageText), pageHeight - 15);
     };
 
-    // Adiciona o cabeçalho na primeira página
     addHeader();
 
-    // Função para adicionar uma imagem ao PDF com bordas arredondadas
+    // Função para adicionar imagem ao PDF centralizada
     const addImageToPDF = (imgData, index) => {
         return new Promise((resolve) => {
             const img = new Image();
             img.src = imgData;
             img.onload = () => {
-                // Verifica se já adicionamos 2 imagens na página atual
                 if (imagesPerPage >= 2) {
-                    addFooter(); // Adiciona o rodapé antes de criar nova página
-                    doc.addPage(); // Adiciona uma nova página
+                    addFooter();
+                    doc.addPage();
                     pageCount++;
-                    addHeader(); // Adiciona o cabeçalho na nova página
-                    yOffset = 50; // Reinicia o yOffset para a nova página
-                    imagesPerPage = 0; // Reinicia o contador de imagens
+                    addHeader();
+                    yOffset = 50;
+                    imagesPerPage = 0;
                 }
 
-                // Calcula a proporção da imagem para manter a aspect ratio
                 const aspectRatio = img.width / img.height;
-                let finalWidth = imgWidth;
-                let finalHeight = imgHeight;
+                let finalWidth = imgMaxWidth;
+                let finalHeight = imgMaxHeight;
 
                 if (aspectRatio > 1) {
-                    // Imagem mais larga que alta
-                    finalHeight = imgWidth / aspectRatio;
+                    finalHeight = imgMaxWidth / aspectRatio;
                 } else {
-                    // Imagem mais alta que larga
-                    finalWidth = imgHeight * aspectRatio;
+                    finalWidth = imgMaxHeight * aspectRatio;
                 }
 
-                // Adiciona um retângulo com borda arredondada ao redor da imagem
-                doc.setDrawColor(220, 220, 220); // Cor da borda cinza claro
-                doc.setLineWidth(1);
-                doc.roundedRect(margin, yOffset, finalWidth, finalHeight, 5, 5, 'D'); // Borda arredondada
+                // Centraliza a imagem na página
+                const xPos = (pageWidth - finalWidth) / 2;
+                doc.addImage(imgData, 'JPEG', xPos, yOffset, finalWidth, finalHeight);
 
-                // Adiciona a imagem com bordas arredondadas
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = finalWidth;
-                canvas.height = finalHeight;
-
-                // Aplica bordas arredondadas na imagem
-                ctx.beginPath();
-                ctx.moveTo(5, 0);
-                ctx.arcTo(canvas.width, 0, canvas.width, canvas.height, 5);
-                ctx.arcTo(canvas.width, canvas.height, 0, canvas.height, 5);
-                ctx.arcTo(0, canvas.height, 0, 0, 5);
-                ctx.arcTo(0, 0, canvas.width, 0, 5);
-                ctx.closePath();
-                ctx.clip();
-                ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
-
-                // Adiciona a imagem ao PDF
-                doc.addImage(canvas.toDataURL(), 'JPEG', margin, yOffset, finalWidth, finalHeight);
-                yOffset += finalHeight + margin; // Atualiza o yOffset para a próxima imagem
-                imagesPerPage++; // Incrementa o contador de imagens
+                yOffset += finalHeight + margin;
+                imagesPerPage++;
 
                 resolve();
             };
         });
     };
 
-    // Função para carregar e adicionar todas as imagens
+    // Carregar e adicionar todas as imagens
     const loadImages = async () => {
         const imagePromises = [];
         for (let i = 0; i < images.length; i++) {
@@ -160,8 +122,8 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         }
 
         await Promise.all(imagePromises);
-        addFooter(); // Adiciona o rodapé na última página
-        doc.save(`${title}.pdf`); // Salva o PDF com o nome do título
+        addFooter();
+        doc.save(`${title}.pdf`);
         alert("Relatório gerado com sucesso!");
     };
 
