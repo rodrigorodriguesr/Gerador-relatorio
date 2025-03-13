@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     transition: background-color 0.3s, color 0.3s;
-    background-image: url('/image/beautiful-view-construction-site-city-sunset.jpg');
+    background-image: url('/src/image/beautiful-view-construction-site-city-sunset.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
