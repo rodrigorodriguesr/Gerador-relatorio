@@ -40,7 +40,7 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
 
-        const headerText = `Cidade: ${city}    Ano: ${year}    Objeto: ${object}`;
+        const headerText = `${city}  ${year}    Objeto: ${object}`;
         const headerLines = splitText(headerText, pageWidth - 2 * margin);
 
         doc.setFillColor(44, 44, 44);
@@ -57,13 +57,18 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         doc.setFontSize(10);
         doc.setFont("helvetica", "italic");
 
+        // Obtém a data atual
+        const today = new Date();
+        const formattedDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
+
         const pageText = `Página ${pageCount}`;
+        const footerText = `${footer} - Data: ${formattedDate}`;
 
         doc.setFillColor(44, 44, 44);
         doc.rect(0, pageHeight - 25, pageWidth, 15, 'F');
 
         doc.setTextColor(255, 255, 255);
-        doc.text(footer, margin, pageHeight - 15);
+        doc.text(footerText, margin, pageHeight - 15);
         doc.text(pageText, pageWidth - margin - doc.getTextWidth(pageText), pageHeight - 15);
     };
 
