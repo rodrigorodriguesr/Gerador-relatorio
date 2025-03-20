@@ -12,9 +12,21 @@
             margin: 0;
             padding: 20px;
         }
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #2e2e2e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.3);
+            color: #fff;
+            max-width: 800px;
+            margin: auto;
+        }
         video, canvas, img {
             max-width: 100%;
-            border: 2px solid #ccc;
             border-radius: 10px;
         }
         button {
@@ -30,172 +42,77 @@
         button:hover {
             background-color: #0056b3;
         }
+        #photo-container {
+            position: relative;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
-    <h1>GPS Map Camera</h1>
-    <video id="video" autoplay></video>
-    <button id="capture">Tirar Foto</button>
-    <button id="downloadImage" style="display:none;">Baixar Imagem</button>
-    <canvas id="canvas" style="display:none;"></canvas>
-    <img id="photo" alt="Foto capturada">
+    <div id="container">
+        <h1>GPS Map Camera</h1>
+        <video id="video" autoplay></video>
+        <button id="capture">Tirar Foto</button>
+        <button id="downloadImage" style="display:none;">Baixar Imagem</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <div id="photo-container">
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="photo" alt="Foto capturada">
+        </div>
+    </div>
+
     <script>
-        const { jsPDF } = window.jspdf;
-
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('photo');
         const captureButton = document.getElementById('capture');
         const downloadImageButton = document.getElementById('downloadImage');
 
-        let imageData = null;
-        let latitude = null;
-        let longitude = null;
-        let address = "Endereço não disponível";
-
-        // Chave da API do Google Maps Static (substitua pela sua chave)
-        const googleMapsApiKey = 'SUA_CHAVE_DE_API_AQUI';
-
-        // Acessa a câmera do dispositivo
         navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-                video.srcObject = stream;
-                console.log("Câmera acessada com sucesso.");
-            })
-            .catch((err) => {
-                console.error("Erro ao acessar a câmera: ", err);
-                alert("Erro ao acessar a câmera. Certifique-se de permitir o acesso à câmera.");
-            });
+            .then(stream => video.srcObject = stream)
+            .catch(err => alert('Erro ao acessar a câmera: ' + err));
 
-        // Função para obter o endereço a partir das coordenadas
-        const getAddress = async (lat, lng) => {
-            try {
-                const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsApiKey}`);
-                const data = await response.json();
-                if (data.results && data.results[0]) {
-                    return data.results[0].formatted_address;
-                }
-                return "Endereço não disponível";
-            } catch (error) {
-                console.error("Erro ao obter endereço: ", error);
-                return "Erro ao obter endereço";
-            }
-        };
-
-        // Captura a foto
         captureButton.addEventListener('click', async () => {
-            console.log("Botão de captura clicado.");
             const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            console.log("Foto capturada no canvas.");
-
-            // Captura a localização
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        latitude = position.coords.latitude;
-                        longitude = position.coords.longitude;
-                        console.log("Localização capturada:", latitude, longitude);
-
-                        // Obtém o endereço aproximado
-                        address = await getAddress(latitude, longitude);
-                        console.log("Endereço obtido:", address);
-
-                        // Obtém a data e hora atual
-                        const now = new Date();
-                        const dateTime = now.toLocaleString(); // Formata data e hora
-
-                        // Textos para sobrepor na imagem
-                        const locationText = `📍 Localização: Lat ${latitude.toFixed(6)}, Long ${longitude.toFixed(6)}`;
-                        const dateTimeText = `📅 Data/Hora: ${dateTime}`;
-                        const addressText = `🏠 Endereço: ${address}`;
-                        const userText = "👤 Usuário: João Silva"; // Exemplo de dado fixo
-
-                        // Configurações do texto
-                        context.font = '18px "Segoe UI", sans-serif'; // Fonte moderna
-                        context.fillStyle = 'white'; // Cor do texto
-                        context.strokeStyle = 'black'; // Cor do contorno
-                        context.lineWidth = 2; // Espessura do contorno
-
-                        // Função para adicionar texto com fundo semi-transparente
-                        const addTextWithBackground = (text, x, y) => {
-                            const textWidth = context.measureText(text).width;
-                            const padding = 10;
-                            const bgHeight = 30;
-
-                            // Desenha o fundo semi-transparente
-                            context.fillStyle = 'rgba(0, 0, 0, 0.5)'; // Preto com 50% de opacidade
-                            context.fillRect(x - padding / 2, y - bgHeight + padding / 2, textWidth + padding, bgHeight);
-
-                            // Desenha o texto com contorno
-                            context.fillStyle = 'white';
-                            context.strokeText(text, x, y);
-                            context.fillText(text, x, y);
-                        };
-
-                        // Adiciona os textos na imagem
-                        addTextWithBackground(userText, 20, canvas.height - 170); // Usuário
-                        addTextWithBackground(locationText, 20, canvas.height - 130); // Localização
-                        addTextWithBackground(dateTimeText, 20, canvas.height - 90); // Data/Hora
-                        addTextWithBackground(addressText, 20, canvas.height - 50); // Endereço
-
-                        // Gera a URL do mapa estático
-                        const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=15&size=400x200&maptype=roadmap&markers=color:red%7C${latitude},${longitude}&key=${googleMapsApiKey}`;
-
-                        // Carrega a imagem do mapa
-                        const mapImage = new Image();
-                        mapImage.crossOrigin = "Anonymous"; // Permite carregar imagens de outros domínios
-                        mapImage.src = mapUrl;
-
-                        mapImage.onload = () => {
-                            console.log("Mapa carregado com sucesso.");
-                            // Desenha o mapa na foto
-                            context.drawImage(mapImage, 20, 20, 200, 100);
-
-                            // Converte a imagem com os textos e mapa para base64
-                            imageData = canvas.toDataURL('image/jpeg');
-                            photo.src = imageData;
-                            console.log("Imagem convertida para base64.");
-
-                            // Mostra o botão de download da imagem
-                            downloadImageButton.style.display = 'block';
-
-                            // Gera o PDF com a foto e dados
-                            const doc = new jsPDF();
-                            doc.addImage(imageData, 'JPEG', 10, 10, 180, 120);
-                            doc.save('foto_gps_map_camera.pdf');
-                            console.log("PDF gerado e salvo.");
-                        };
-                    },
-                    (error) => {
-                        console.error("Erro ao capturar localização:", error.message);
-                        alert("Erro ao capturar localização. Certifique-se de permitir o acesso à localização.");
-                    }
-                );
-            } else {
-                console.error("Geolocalização não é suportada pelo navegador.");
-                alert("Geolocalização não é suportada pelo navegador.");
-            }
+            await preencherInformacoes(context);
+            photo.src = canvas.toDataURL('image/jpeg');
+            downloadImageButton.style.display = 'block';
         });
 
-        // Download da imagem
         downloadImageButton.addEventListener('click', () => {
-            if (imageData) {
-                const link = document.createElement('a');
-                link.href = imageData;
-                link.download = 'foto_gps_map_camera.jpg';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                console.log("Imagem baixada com sucesso.");
-            } else {
-                alert("Nenhuma imagem disponível para download.");
-            }
+            const link = document.createElement('a');
+            link.href = photo.src;
+            link.download = 'foto_gps_map_camera.jpg';
+            link.click();
         });
+
+        async function preencherInformacoes(context) {
+            const now = new Date();
+            const dataHora = now.toLocaleString();
+            let latitude = 'Obtendo...';
+            let longitude = 'Obtendo...';
+
+            if (navigator.geolocation) {
+                await new Promise(resolve => {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        latitude = pos.coords.latitude.toFixed(6);
+                        longitude = pos.coords.longitude.toFixed(6);
+                        resolve();
+                    }, resolve);
+                });
+            }
+
+            context.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            context.fillRect(10, canvas.height - 100, canvas.width - 20, 90);
+            context.fillStyle = 'white';
+            context.font = '16px Arial';
+            context.fillText('Localização: GPS Ativado', 20, canvas.height - 70);
+            context.fillText('Latitude: ' + latitude + ' | Longitude: ' + longitude, 20, canvas.height - 50);
+            context.fillText('Data e Hora: ' + dataHora, 20, canvas.height - 30);
+        }
     </script>
 </body>
 </html>
