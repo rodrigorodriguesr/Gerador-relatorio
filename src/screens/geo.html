@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPS Map Camera</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,6 +55,9 @@
         <video id="video" autoplay></video>
         <button id="capture">Tirar Foto</button>
         <button id="downloadImage" style="display:none;">Baixar Imagem</button>
+        <button id="switchCamera">
+            <i class="fas fa-camera"></i>
+        </button>
 
         <div id="photo-container">
             <canvas id="canvas" style="display:none;"></canvas>
@@ -67,10 +71,34 @@
         const photo = document.getElementById('photo');
         const captureButton = document.getElementById('capture');
         const downloadImageButton = document.getElementById('downloadImage');
+        const switchCameraButton = document.getElementById('switchCamera');
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => video.srcObject = stream)
-            .catch(err => alert('Erro ao acessar a câmera: ' + err));
+        let currentStream;
+        let currentCamera = 'user'; // 'user' for front camera, 'environment' for back camera
+
+        function startCamera(cameraType) {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+
+            const constraints = {
+                video: { facingMode: cameraType }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    video.srcObject = stream;
+                    currentStream = stream;
+                })
+                .catch(err => alert('Erro ao acessar a câmera: ' + err));
+        }
+
+        startCamera(currentCamera); // Inicia com a câmera frontal por padrão
+
+        switchCameraButton.addEventListener('click', () => {
+            currentCamera = currentCamera === 'user' ? 'environment' : 'user';
+            startCamera(currentCamera);
+        });
 
         captureButton.addEventListener('click', async () => {
             const context = canvas.getContext('2d');
