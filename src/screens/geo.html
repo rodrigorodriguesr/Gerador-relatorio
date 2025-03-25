@@ -25,10 +25,12 @@
             color: #fff;
             max-width: 800px;
             margin: auto;
+            position: relative;
         }
         video, canvas, img {
             max-width: 100%;
             border-radius: 10px;
+            display: none;
         }
         button {
             margin: 10px;
@@ -39,6 +41,10 @@
             border-radius: 5px;
             background-color: #007bff;
             color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         button:hover {
             background-color: #0056b3;
@@ -52,69 +58,37 @@
 <body>
     <div id="container">
         <h1>GPS Map Camera</h1>
-        <video id="video" autoplay></video>
-        <button id="capture">Tirar Foto</button>
-        <button id="downloadImage" style="display:none;">Baixar Imagem</button>
-        <button id="switchCamera">
-            <i class="fas fa-camera"></i>
-        </button>
-
-        <div id="photo-container">
-            <canvas id="canvas" style="display:none;"></canvas>
-            <img id="photo" alt="Foto capturada">
-        </div>
+        <button id="capture">📸 Capturar Imagem</button>
+        <canvas id="canvas"></canvas>
+        <img id="photo" alt="Foto capturada">
     </div>
 
     <script>
-        const video = document.getElementById('video');
+        const captureButton = document.getElementById('capture');
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('photo');
-        const captureButton = document.getElementById('capture');
-        const downloadImageButton = document.getElementById('downloadImage');
-        const switchCameraButton = document.getElementById('switchCamera');
-
-        let currentStream;
-        let currentCamera = 'user'; // 'user' for front camera, 'environment' for back camera
-
-        function startCamera(cameraType) {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
-
-            const constraints = {
-                video: { facingMode: cameraType }
-            };
-
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    video.srcObject = stream;
-                    currentStream = stream;
-                })
-                .catch(err => alert('Erro ao acessar a câmera: ' + err));
-        }
-
-        startCamera(currentCamera); // Inicia com a câmera frontal por padrão
-
-        switchCameraButton.addEventListener('click', () => {
-            currentCamera = currentCamera === 'user' ? 'environment' : 'user';
-            startCamera(currentCamera);
-        });
 
         captureButton.addEventListener('click', async () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            await preencherInformacoes(context);
-            photo.src = canvas.toDataURL('image/jpeg');
-            downloadImageButton.style.display = 'block';
-        });
-
-        downloadImageButton.addEventListener('click', () => {
-            const link = document.createElement('a');
-            link.href = photo.src;
-            link.download = 'foto_gps_map_camera.jpg';
-            link.click();
+            captureButton.style.display = 'none';
+            const video = document.createElement('video');
+            video.style.display = 'block';
+            document.getElementById('container').appendChild(video);
+            
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            video.srcObject = stream;
+            await video.play();
+            
+            setTimeout(async () => {
+                const context = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                await preencherInformacoes(context);
+                photo.src = canvas.toDataURL('image/jpeg');
+                photo.style.display = 'block';
+                video.remove();
+                stream.getTracks().forEach(track => track.stop());
+            }, 1000);
         });
 
         async function preencherInformacoes(context) {
