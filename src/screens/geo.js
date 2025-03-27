@@ -1,4 +1,3 @@
-// Estilização do container e botões
 document.head.insertAdjacentHTML('beforeend', `
     <style>
         body {
@@ -61,27 +60,35 @@ let useFrontCamera = false;
 let stream = null;
 
 async function startCamera() {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+    try {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: useFrontCamera ? 'user' : 'environment' }
+        });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        await video.play();
+    } catch (error) {
+        console.error('Erro ao acessar a câmera: ', error);
     }
-    stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: useFrontCamera ? 'user' : 'environment' }
-    });
-    video.srcObject = stream;
-    video.style.display = 'block';
-    await video.play();
 }
 
 startCamera();
 
 captureButton.addEventListener('click', async () => {
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    await preencherInformacoes(context);
-    photo.src = canvas.toDataURL('image/jpeg');
-    downloadImage(photo.src);
+    try {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        await preencherInformacoes(context);
+        photo.src = canvas.toDataURL('image/jpeg');
+        downloadImage(photo.src);
+    } catch (error) {
+        console.error('Erro ao capturar imagem: ', error);
+    }
 });
 
 switchCameraButton.addEventListener('click', () => {
