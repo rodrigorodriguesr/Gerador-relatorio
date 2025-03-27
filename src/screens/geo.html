@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FotoLabGeo</title>
+    <title>FotoLab</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
-    
 </head>
 <body>
-
     <div id="container">
         <h1>FotoLab</h1>
-        <video id="video"></video>
-        <button id="capture"></button>
+        <video id="video" style="display: none;"></video>
+        <button id="capture"><i class="fas fa-camera"></i></button>
         <button id="switchCamera"><i class="fas fa-sync-alt"></i></button>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" style="display: none;"></canvas>
         <img id="photo" alt="Foto capturada">
     </div>
 
-    <script src="/src/components/menu.js"></script> 
+    <script src="/src/components/menu.js"></script>
     <script>
         const captureButton = document.getElementById('capture');
         const switchCameraButton = document.getElementById('switchCamera');
@@ -33,15 +31,18 @@
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
             }
-            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: useFrontCamera ? 'user' : 'environment' } });
-            video.srcObject = stream;
-            video.style.display = 'block';
-            await video.play();
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: useFrontCamera ? 'user' : 'environment' } });
+                video.srcObject = stream;
+                await video.play();
+                video.style.display = 'block';
+            } catch (error) {
+                alert('Erro ao acessar a câmera. Verifique as permissões do dispositivo.');
+            }
         }
 
-        startCamera();
-
         captureButton.addEventListener('click', async () => {
+            if (!stream) await startCamera();
             const context = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -83,12 +84,12 @@
             context.fillRect(10, canvas.height - 100, canvas.width - 20, 90);
             context.fillStyle = 'white';
             context.font = '16px Arial';
-            context.fillText('Localização: FotoLabGeo', 20, canvas.height - 70);
+            context.fillText('Localização: FotoLab', 20, canvas.height - 70);
             context.fillText('Latitude: ' + latitude + ' | Longitude: ' + longitude, 20, canvas.height - 50);
             context.fillText('Data e Hora: ' + dataHora, 20, canvas.height - 30);
         }
     </script>
-    <script src="/src/components/footer.js"></script> 
+    <script src="/src/components/footer.js"></script>
 </body>
 
 <style>
@@ -124,21 +125,12 @@
         border-radius: 50%;
         background-color: rgba(0, 0, 0, 0.5);
         border: 4px solid #c4ff00;
-        position: absolute;
-        bottom: 20px;
         cursor: pointer;
         display: flex;
         justify-content: center;
         align-items: center;
         color: #c4ff00;
         font-size: 20px;
-    }
-    #capture {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    #switchCamera {
-        left: calc(50% + 80px);
     }
 </style>
 
