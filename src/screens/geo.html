@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Map Camera</title>
+    <title>FotoLabGeo</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     
@@ -11,7 +11,7 @@
 <body>
 
     <div id="container">
-        <h1>GPS Map Camera</h1>
+        <h1>FotoLab</h1>
         <video id="video"></video>
         <button id="capture"></button>
         <button id="switchCamera"><i class="fas fa-sync-alt"></i></button>
@@ -83,7 +83,7 @@
             context.fillRect(10, canvas.height - 100, canvas.width - 20, 90);
             context.fillStyle = 'white';
             context.font = '16px Arial';
-            context.fillText('Localização: GPS Ativado', 20, canvas.height - 70);
+            context.fillText('Localização: FotoLabGeo', 20, canvas.height - 70);
             context.fillText('Latitude: ' + latitude + ' | Longitude: ' + longitude, 20, canvas.height - 50);
             context.fillText('Data e Hora: ' + dataHora, 20, canvas.height - 30);
         }
