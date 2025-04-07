@@ -1,14 +1,21 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     transition: background-color 0.3s, color 0.3s;
     background-image: url('./src/image/beautiful-view-construction-site-city-sunset.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
-
 
 .light-mode {
     background-color: rgba(255, 255, 255, 0.8);
@@ -20,26 +27,10 @@ body {
     color: #ffffff;
 }
 
-
-
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: rgba(45, 45, 45, 0.9);
-    color: white;
-    border-radius: 8px;
-    margin: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 header h1 {
     margin: 0;
     font-size: 1.5rem;
 }
-
 
 nav a {
     color: white;
@@ -58,7 +49,7 @@ nav a:hover {
 .mode-toggle,
 form button,
 #imageUploadLabel {
-    background-color: rgba(45, 45, 45, 0.7); /* Cinza escuro translúcido */
+    background-color: rgba(45, 45, 45, 0.7);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 0.75rem 1.5rem;
@@ -67,7 +58,7 @@ form button,
     font-size: 1rem;
     font-weight: 500;
     transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
-    backdrop-filter: blur(8px); /* Efeito vidro fosco */
+    backdrop-filter: blur(8px);
 }
 
 .mode-toggle:hover,
@@ -92,9 +83,10 @@ form button:hover,
     background-color: rgba(240, 244, 248, 1);
 }
 
-/* Estilo do formulário */
+/* Estilo do conteúdo principal */
 main {
     padding: 2rem;
+    flex: 1;
 }
 
 form {
@@ -145,7 +137,7 @@ form input:focus, form textarea:focus {
     outline: none;
 }
 
-/* Estilização do botão de upload de imagem */
+/* Upload de imagem */
 #imageUpload {
     display: none;
 }
@@ -163,7 +155,7 @@ form input:focus, form textarea:focus {
     color: #1a1a1a;
 }
 
-/* Pré-visualização das imagens */
+/* Pré-visualização de imagens */
 #imagePreview {
     display: flex;
     flex-wrap: wrap;
@@ -184,30 +176,13 @@ form input:focus, form textarea:focus {
     transform: scale(1.1);
 }
 
-
+/* Rodapé */
 footer {
-
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(46, 46, 46, 0.9); /* Fundo escuro com leve transparência */
-        color: white;
-        text-align: center;
-        padding: 5px 0; /* Diminui a altura */
-        font-size: 14px; /* Fonte menor */
-        box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
-        font-family: Arial, sans-serif;
-
-    
-}
-
-footer p {
-    margin: 0;
+    padding: 1rem;
+    text-align: center;
     font-weight: 500;
 }
 
-/* Modo claro */
 .light-mode footer {
     background-color: rgba(240, 244, 248, 0.8);
     color: #1a1a1a;
@@ -219,17 +194,15 @@ footer p {
 }
 
 #logo {
-    width: 50px;  /* Ajuste o tamanho do logo conforme necessário */
+    width: 50px;
     height: auto;
-    margin-right: 10px;  /* Espaço entre o logo e o nome */
+    margin-right: 10px;
 }
 
 #site-name {
-    font-size: 24px;  /* Ajuste o tamanho do nome conforme necessário */
+    font-size: 24px;
     font-weight: bold;
 }
-
-
 
 /* Responsividade */
 @media (max-width: 768px) {
@@ -246,10 +219,7 @@ footer p {
         width: 80px;
         height: 80px;
     }
-}
 
-/* Responsividade */
-@media (max-width: 768px) {
     footer {
         margin-top: 1rem;
     }
