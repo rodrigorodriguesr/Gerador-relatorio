@@ -20,7 +20,7 @@ function loadMenu() {
         </style>
 
         <div id="logo-container" style="display: flex; align-items: center; gap: 1rem;">
-            <img src="/src/image/Foto__3_-removebg-preview.png" alt="FotoLab Logo" id="logo" style="height: 50px;">
+            <img src="/src/image/logofotoLab.png" alt="FotoLab Logo" id="logo" style="height: 50px;">
             <h1 id="site-name" style="margin: 0; font-size: 1.5rem;">FotoLab</h1>
         </div>
 

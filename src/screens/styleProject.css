@@ -2,18 +2,14 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #ffffff;
+    background-color: #fff8b0; /* amarelo claro */
     color: #1a1a1a;
-    transition: background-color 0.3s, color 0.3s;
-    
 }
 
 header h1 {
     margin: 0;
     font-size: 1.75rem;
-  
 }
-
 
 nav a {
     color: white;
@@ -80,7 +76,6 @@ main {
     font-weight: 400;
     text-align: justify;
 }
-
 
 /* Responsividade */
 @media (max-width: 768px) {

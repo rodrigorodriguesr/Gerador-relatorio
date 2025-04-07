@@ -22,9 +22,10 @@ document.getElementById('generateReport').addEventListener('click', function(eve
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    const imgMaxWidth = 150;
-    const imgMaxHeight = 100;
+    const imgWidth = 170;
+    const imgHeight = 90; // Ajustado para caber duas imagens por página
     const margin = 20;
+    const spacingBetweenImages = 10;
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
     let yOffset = 0;
@@ -38,7 +39,7 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         const headerHeight = 50;
 
         doc.setFillColor(44, 44, 44);
-        doc.rect(0, headerTop, pageWidth, headerHeight, 'F'); // fundo do cabeçalho
+        doc.rect(0, headerTop, pageWidth, headerHeight, 'F');
 
         doc.setFont("helvetica", "bold");
         doc.setFontSize(16);
@@ -62,7 +63,7 @@ document.getElementById('generateReport').addEventListener('click', function(eve
             currentY += 6;
         });
 
-        yOffset = currentY + 10; // espaço após cabeçalho
+        yOffset = currentY + 10;
     };
 
     const addFooter = () => {
@@ -96,20 +97,10 @@ document.getElementById('generateReport').addEventListener('click', function(eve
                     imagesPerPage = 0;
                 }
 
-                const aspectRatio = img.width / img.height;
-                let finalWidth = imgMaxWidth;
-                let finalHeight = imgMaxHeight;
+                const xPos = (pageWidth - imgWidth) / 2;
+                doc.addImage(imgData, 'JPEG', xPos, yOffset, imgWidth, imgHeight);
 
-                if (aspectRatio > 1) {
-                    finalHeight = imgMaxWidth / aspectRatio;
-                } else {
-                    finalWidth = imgMaxHeight * aspectRatio;
-                }
-
-                const xPos = (pageWidth - finalWidth) / 2;
-                doc.addImage(imgData, 'JPEG', xPos, yOffset, finalWidth, finalHeight);
-
-                yOffset += finalHeight + margin;
+                yOffset += imgHeight + spacingBetweenImages;
                 imagesPerPage++;
 
                 resolve();

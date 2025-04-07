@@ -6,10 +6,9 @@
     <title>FotoLab</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
-    <link rel="icon" type="image/png" href="/image/Foto__3_-removebg-preview.png">
+    <link rel="icon" type="image/png" href="src/image/logofotoLab.png">
     <link rel="stylesheet" href="/style.css">
-    <link rel="icon" type="image/png" href="/src/image/Foto__3_-removebg-preview.png" />
-
+   
    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -21,29 +20,25 @@
 
     <main>
         <form id="reportForm">
-            <h2>Preencha o Formulário para Gerar seu Relatório Fotográfico</h1>
+            <h2>Preencha o Formulário para Gerar Relatório Fotográfico</h1>
             <label for="city">Cidade:</label>
-            <input type="text" id="city" name="city" required>
+            <input type="text" id="city" name="city" placeholder="Digite o nome da Cidade" required>
 
             <label for="agreement">Convênio:</label>
-            <input type="text" id="agreement" name="agreement" required>
+            <input type="text" id="agreement" name="agreement" placeholder="Digite o numero do convênio" required>
 
             <label for="year">Ano:</label>
-            <input type="text" id="year" name="year" required>
-            
-           
-
+            <input type="text" id="year" name="year" placeholder="Digite o ano" required>
+    
             <label for="object">Objeto:</label>
-<input type="text" id="object" name="object" maxlength="140" required placeholder="Descreva brevemente o objeto (máx. 140 caracteres)">
-<small id="charCount" style="color: gray;">140 caracteres restantes</small>
-
-            
+            <input type="text" id="object" name="object" maxlength="140" required placeholder="Descreva brevemente o objeto (máx. 140 caracteres)">
+            <small id="charCount" style="color: gray;">140 caracteres restantes</small>
 
             <label for="footer">Rodapé:</label>
-            <input type="text" id="footer" name="footer" required>
+            <input type="text" id="footer" name="footer" placeholder="Digite o Rodapé" required>
 
             <label for="title">Título do Relatório:</label>
-            <input type="text" id="title" name="title" required>
+            <input type="text" id="title" name="title" placeholder="ex.: 1ª Medição do contrato xx/2025"required>
 
             <label for="images">Adicionar Imagens:</label>
             <input type="file" id="images" name="images" multiple accept="image/*">
@@ -52,7 +47,21 @@
 
             <button type="submit" id="generateReport">Gerar Relatório</button>
         </form>
-    </main>
+        
+        <!-- Modal -->
+        <div id="photoModal" class="modal">
+            <div class="modal-content">
+              <span class="close" onclick="closeModal()">&times;</span>
+              <h2>📸 Orientação sobre Fotos</h2>
+              <p>
+                Para melhor visualização no relatório, tire as fotos sempre no formato <strong>horizontal</strong>.
+              </p>
+              <p class="note">
+                Isso garante que as imagens fiquem bem enquadradas e visíveis no modelo padrão do relatório.
+              </p>
+            </div>
+          </div>
+      
     <!-- Footer (inserido via JS) -->
     <div id="footer-container">
         <script src="/src/components/footer.js"></script>
@@ -76,7 +85,36 @@
             charCount.style.color = 'gray';
           }
         });
+
+
+        function getTodayDate() {
+            const today = new Date();
+            return today.toISOString().split('T')[0]; // Ex: '2025-04-07'
+        }
+
+        function openModal() {
+            document.getElementById("photoModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("photoModal").style.display = "none";
+            const today = getTodayDate();
+            localStorage.setItem("photoNoticeDate", today);
+        }
+
+        // Mostrar apenas uma vez por dia
+        window.onload = function () {
+            const savedDate = localStorage.getItem("photoNoticeDate");
+            const today = getTodayDate();
+
+            if (savedDate !== today) {
+            openModal();
+            }
+        };
+
       </script>
+
+      
       
 </body>
 </html>
