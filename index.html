@@ -30,9 +30,14 @@
 
             <label for="year">Ano:</label>
             <input type="text" id="year" name="year" required>
+            
+           
 
             <label for="object">Objeto:</label>
-            <input type="text" id="object" name="object" required>
+<input type="text" id="object" name="object" maxlength="140" required placeholder="Descreva brevemente o objeto (máx. 140 caracteres)">
+<small id="charCount" style="color: gray;">140 caracteres restantes</small>
+
+            
 
             <label for="footer">Rodapé:</label>
             <input type="text" id="footer" name="footer" required>
@@ -54,5 +59,24 @@
     </div>
     
     <script src="./script.js"></script>
+    <script>
+        const objectInput = document.getElementById('object');
+        const charCount = document.getElementById('charCount');
+        const maxLength = 140;
+      
+        objectInput.addEventListener('input', () => {
+          const remaining = maxLength - objectInput.value.length;
+      
+          charCount.textContent = `${remaining} caracteres restantes`;
+      
+          if (remaining === 0) {
+            charCount.style.color = 'red';
+            charCount.textContent = 'Limite de caracteres atingido';
+          } else {
+            charCount.style.color = 'gray';
+          }
+        });
+      </script>
+      
 </body>
 </html>

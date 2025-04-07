@@ -9,7 +9,7 @@ document.getElementById('generateReport').addEventListener('click', function(eve
     const footer = document.getElementById('footer').value;
     const title = document.getElementById('title').value;
     const images = document.getElementById('images').files;
-    
+
     if (!title) {
         alert("Por favor, insira um título para o relatório.");
         return;
@@ -22,42 +22,53 @@ document.getElementById('generateReport').addEventListener('click', function(eve
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Configurações do layout
-    const imgMaxWidth = 150; 
-    const imgMaxHeight = 100; 
+    const imgMaxWidth = 150;
+    const imgMaxHeight = 100;
     const margin = 20;
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
-    let yOffset = 50; 
-    let pageCount = 1; 
-    let imagesPerPage = 0; 
+    let yOffset = 0;
+    let pageCount = 1;
+    let imagesPerPage = 0;
 
-    // Função para quebrar texto
     const splitText = (text, maxWidth) => doc.splitTextToSize(text, maxWidth);
 
-    // Função para adicionar o cabeçalho
     const addHeader = () => {
-        doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-
-        const headerText = `${city}  ${year}    Objeto: ${object}`;
-        const headerLines = splitText(headerText, pageWidth - 2 * margin);
+        const headerTop = 10;
+        const headerHeight = 50;
 
         doc.setFillColor(44, 44, 44);
-        doc.rect(0, 10, pageWidth, 30, 'F'); 
+        doc.rect(0, headerTop, pageWidth, headerHeight, 'F'); // fundo do cabeçalho
 
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
         doc.setTextColor(255, 255, 255);
-        headerLines.forEach((line, index) => {
-            doc.text(line, margin, 25 + index * 10);
+        doc.text(city, margin, headerTop + 18);
+
+        doc.setFontSize(12);
+        const convenioLine = `Convênio: ${agreement} - ${year}`;
+        const objectLine = `Objeto: ${object}`;
+
+        const convenioLines = splitText(convenioLine, pageWidth - 2 * margin);
+        const objectLines = splitText(objectLine, pageWidth - 2 * margin);
+
+        let currentY = headerTop + 30;
+        convenioLines.forEach(line => {
+            doc.text(line, margin, currentY);
+            currentY += 6;
         });
+        objectLines.forEach(line => {
+            doc.text(line, margin, currentY);
+            currentY += 6;
+        });
+
+        yOffset = currentY + 10; // espaço após cabeçalho
     };
 
-    // Função para adicionar o rodapé
     const addFooter = () => {
         doc.setFontSize(10);
         doc.setFont("helvetica", "italic");
 
-        // Obtém a data atual
         const today = new Date();
         const formattedDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
 
@@ -72,9 +83,6 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         doc.text(pageText, pageWidth - margin - doc.getTextWidth(pageText), pageHeight - 15);
     };
 
-    addHeader();
-
-    // Função para adicionar imagem ao PDF centralizada
     const addImageToPDF = (imgData, index) => {
         return new Promise((resolve) => {
             const img = new Image();
@@ -85,7 +93,6 @@ document.getElementById('generateReport').addEventListener('click', function(eve
                     doc.addPage();
                     pageCount++;
                     addHeader();
-                    yOffset = 50;
                     imagesPerPage = 0;
                 }
 
@@ -99,7 +106,6 @@ document.getElementById('generateReport').addEventListener('click', function(eve
                     finalWidth = imgMaxHeight * aspectRatio;
                 }
 
-                // Centraliza a imagem na página
                 const xPos = (pageWidth - finalWidth) / 2;
                 doc.addImage(imgData, 'JPEG', xPos, yOffset, finalWidth, finalHeight);
 
@@ -111,7 +117,6 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         });
     };
 
-    // Carregar e adicionar todas as imagens
     const loadImages = async () => {
         const imagePromises = [];
         for (let i = 0; i < images.length; i++) {
@@ -132,6 +137,7 @@ document.getElementById('generateReport').addEventListener('click', function(eve
         alert("Relatório gerado com sucesso!");
     };
 
+    addHeader();
     loadImages().catch(() => {
         alert("Ocorreu um erro ao gerar o PDF.");
     });
