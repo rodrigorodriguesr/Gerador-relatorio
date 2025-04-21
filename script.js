@@ -23,7 +23,7 @@ document.getElementById('generateReport').addEventListener('click', function(eve
     const doc = new jsPDF();
 
     const imgWidth = 170;
-    const imgHeight = 90; // Ajustado para caber duas imagens por página
+    const imgHeight = 90; 
     const margin = 20;
     const spacingBetweenImages = 10;
     const pageWidth = doc.internal.pageSize.width;
